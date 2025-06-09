@@ -1,153 +1,159 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>감정 기반 명언 책</title>
-<style>
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px;
-    user-select: none;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>마법의 패션 책님</title>
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
 
-  h1 {
-    margin-bottom: 20px;
-  }
+    #book-container {
+      width: 400px;
+      height: 300px;
+      perspective: 1500px;
+      position: relative;
+    }
 
-  #emotion-buttons {
-    margin-bottom: 30px;
-  }
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      transform-origin: left center;
+      transition: transform 1s ease-in-out;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      box-sizing: border-box;
+    }
 
-  #emotion-buttons button {
-    background: #007BFF;
-    border: none;
-    color: white;
-    font-size: 16px;
-    padding: 10px 16px;
-    margin: 6px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
+    .front {
+      z-index: 2;
+      transform: rotateY(0deg);
+    }
 
-  #emotion-buttons button:hover {
-    background: #0056b3;
-  }
+    .back {
+      transform: rotateY(-180deg);
+    }
 
-  #book-container {
-    width: 400px;
-    height: 300px;
-    perspective: 1500px;
-  }
+    .flipped.front {
+      transform: rotateY(-180deg);
+      z-index: 1;
+    }
 
-  .page {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-    transform-origin: left center;
-    transition: transform 1s ease-in-out;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-    box-sizing: border-box;
-  }
+    .flipped.back {
+      transform: rotateY(0deg);
+      z-index: 2;
+    }
 
-  .front {
-    z-index: 2;
-    transform: rotateY(0deg);
-  }
+    .emotion-button {
+      background: #007BFF;
+      color: white;
+      padding: 10px 16px;
+      margin: 6px 0;
+      border: none;
+      border-radius: 5px;
+      width: 80%;
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-  .back {
-    transform: rotateY(-180deg);
-  }
+    .emotion-button:hover {
+      background: #0056b3;
+    }
 
-  .page.flipped.front {
-    transform: rotateY(-180deg);
-    z-index: 1;
-  }
+    #control-buttons {
+      margin-top: 20px;
+      display: none;
+    }
 
-  .page.flipped.back {
-    transform: rotateY(0deg);
-    z-index: 2;
-  }
+    #control-buttons button {
+      background: #28a745;
+      border: none;
+      color: white;
+      font-size: 15px;
+      padding: 8px 14px;
+      margin: 0 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-  .content {
-    font-size: 18px;
-    text-align: center;
-    line-height: 1.5;
-  }
+    #close-book {
+      background: #dc3545;
+      margin-top: 20px;
+    }
 
-  #control-buttons {
-    margin-top: 20px;
-  }
+    h1 {
+      font-size: 22px;
+    }
 
-  #control-buttons button {
-    background: #28a745;
-    border: none;
-    color: white;
-    font-size: 15px;
-    padding: 8px 14px;
-    margin: 0 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  #control-buttons button:hover {
-    background: #1e7e34;
-  }
-
-</style>
+  </style>
 </head>
 <body>
 
-<h1>📘 감정의 옷장에 오신 것을 환영합니다!</h1>
-<div id="emotion-buttons">
-  <!-- 감정 버튼들 -->
-  <button data-emotion="행복">행복</button>
-  <button data-emotion="슬픔">슬픔</button>
-  <button data-emotion="분노">분노</button>
-  <button data-emotion="불안">불안</button>
-  <button data-emotion="평온">평온</button>
-  <button data-emotion="설렘">설렘</button>
-  <button data-emotion="지루함">지루함</button>
-  <button data-emotion="피곤함">피곤함</button>
-  <button data-emotion="자신감">자신감</button>
-  <button data-emotion="외로움">외로움</button>
-</div>
-
 <div id="book-container">
-  <div class="page front">
-    <div class="content" id="front-content">
-      감정 상태를 선택해주세요
-    </div>
+  <!-- 표지 -->
+  <div class="page front" id="cover-page">
+    <h1>✨ 마법의 패션 책님 ✨</h1>
   </div>
-  <div class="page back">
-    <div class="content" id="back-content">
-      명언이 여기에 표시됩니다.
+
+  <!-- 첫 페이지 (감정 선택) -->
+  <div class="page back" id="emotion-page">
+    <h2>당신의 감정을 선택해주세요</h2>
+    <div id="emotion-buttons">
+      <button class="emotion-button" data-emotion="행복">행복</button>
+      <button class="emotion-button" data-emotion="슬픔">슬픔</button>
+      <button class="emotion-button" data-emotion="분노">분노</button>
+      <button class="emotion-button" data-emotion="불안">불안</button>
+      <button class="emotion-button" data-emotion="평온">평온</button>
+      <button class="emotion-button" data-emotion="설렘">설렘</button>
+      <button class="emotion-button" data-emotion="지루함">지루함</button>
+      <button class="emotion-button" data-emotion="피곤함">피곤함</button>
+      <button class="emotion-button" data-emotion="자신감">자신감</button>
+      <button class="emotion-button" data-emotion="외로움">외로움</button>
     </div>
   </div>
 </div>
 
-<div id="control-buttons" style="display:none;">
-  <button id="btn-other-quote">🔁 다른 명언 보기</button>
-  <button id="btn-back-to-menu">↩ 감정 다시 고르기</button>
+<!-- 명언 표시 -->
+<div id="quote-display" style="display:none; margin-top: 30px; text-align: center;">
+  <h3 id="emotion-title"></h3>
+  <p style="font-style: italic;" id="quote-text"></p>
+  <p><strong id="quote-author"></strong></p>
+  <div id="control-buttons">
+    <button id="btn-other-quote">🔁 다른 명언</button>
+    <button id="close-book">📕 책 덮기</button>
+  </div>
 </div>
 
 <script>
-  // 명언 데이터
-  const quotesByEmotion = {
+  const cover = document.getElementById("cover-page");
+  const back = document.getElementById("emotion-page");
+  const container = document.getElementById("book-container");
+
+  const emotionButtons = document.querySelectorAll(".emotion-button");
+  const quoteDisplay = document.getElementById("quote-display");
+  const quoteText = document.getElementById("quote-text");
+  const quoteAuthor = document.getElementById("quote-author");
+  const emotionTitle = document.getElementById("emotion-title");
+  const btnOther = document.getElementById("btn-other-quote");
+  const btnClose = document.getElementById("close-book");
+  const controlButtons = document.getElementById("control-buttons");
+
+  const quotes = {
     "행복": [
       ["패션은 행복을 입는 방법이다.", "John Galliano"],
       ["스타일은 자기 자신을 사랑하는 방법이야.", "Donna Karan"],
@@ -200,85 +206,5 @@
     ]
   };
 
-  const frontPage = document.querySelector('.front');
-  const backPage = document.querySelector('.back');
-  const frontContent = document.getElementById('front-content');
-  const backContent = document.getElementById('back-content');
-  const btnOtherQuote = document.getElementById('btn-other-quote');
-  const btnBackToMenu = document.getElementById('btn-back-to-menu');
-  const controlButtons = document.getElementById('control-buttons');
-  const emotionButtons = document.querySelectorAll('#emotion-buttons button');
-
-  let currentEmotion = null;
-  let usedQuotes = [];
-
-  // 페이지 넘기기 함수
   function flipBook() {
-    frontPage.classList.toggle('flipped');
-    backPage.classList.toggle('flipped');
-  }
-
-  // 명언 랜덤 선택 (중복 피하기)
-  function getRandomQuote(emotion) {
-    if (!quotesByEmotion[emotion]) return null;
-    const quotes = quotesByEmotion[emotion];
-
-    // 모든 명언을 다 사용했다면 초기화
-    if (usedQuotes.length >= quotes.length) usedQuotes = [];
-
-    let idx;
-    do {
-      idx = Math.floor(Math.random() * quotes.length);
-    } while (usedQuotes.includes(idx));
-
-    usedQuotes.push(idx);
-    return quotes[idx];
-  }
-
-  // 명언 출력 및 페이지 넘기기
-  function showQuote(emotion) {
-    currentEmotion = emotion;
-    const [quote, author] = getRandomQuote(emotion) || ["명언이 없습니다.", ""];
-    const randomPageNum = Math.floor(Math.random() * 289) + 12; // 12~300
-
-    frontContent.textContent = `📄 ${randomPageNum} 페이지`;
-    backContent.innerHTML = `
-      <div style="font-size: 20px; font-weight: 600; margin-bottom: 12px;">🧠 감정 상태: ${emotion}</div>
-      <div style="font-style: italic;">"${quote}"</div>
-      <div style="margin-top: 15px; font-weight: 700;">👗 ${author}</div>
-    `;
-
-    flipBook();
-    controlButtons.style.display = "block";
-  }
-
-  // 감정 선택 시 처리
-  emotionButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      usedQuotes = [];
-      showQuote(button.dataset.emotion);
-    });
-  });
-
-  // 다른 명언 보기 버튼
-  btnOtherQuote.addEventListener('click', () => {
-    showQuote(currentEmotion);
-  });
-
-  // 다시 감정 선택 화면으로 돌아가기
-  btnBackToMenu.addEventListener('click', () => {
-    flipBook();
-    controlButtons.style.display = "none";
-
-    // 약간의 딜레이 후에 앞면 내용 초기화
-    setTimeout(() => {
-      frontContent.textContent = "감정 상태를 선택해주세요";
-      backContent.textContent = "명언이 여기에 표시됩니다.";
-      currentEmotion = null;
-      usedQuotes = [];
-    }, 600); // 페이지 닫히는 애니메이션 시간과 맞춤
-  });
-</script>
-
-</body>
-</html>
+    cover.classList
