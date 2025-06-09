@@ -2,22 +2,23 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>마법의 패션 책님</title>
   <style>
     body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background: #f2f2f2;
+      margin: 0;
+      padding: 50px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 50px;
+      background: #f7f2f0;
+      font-family: 'Noto Sans KR', sans-serif;
     }
 
     #book-container {
       width: 400px;
       height: 300px;
-      perspective: 1500px;
+      perspective: 1200px;
       position: relative;
     }
 
@@ -26,93 +27,97 @@
       width: 100%;
       height: 100%;
       background: white;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
       border-radius: 10px;
-      transform-origin: left center;
-      transition: transform 1s ease-in-out;
-      overflow: hidden;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transition: transform 1s ease;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 30px;
+      align-items: center;
+      padding: 20px;
       box-sizing: border-box;
     }
 
-    .front {
+    #cover-page {
       z-index: 2;
       transform: rotateY(0deg);
     }
 
-    .back {
-      transform: rotateY(-180deg);
-    }
-
-    .flipped.front {
+    #cover-page.flipped {
       transform: rotateY(-180deg);
       z-index: 1;
     }
 
-    .flipped.back {
+    #emotion-page {
+      transform: rotateY(180deg);
+      z-index: 1;
+    }
+
+    #emotion-page.flipped {
       transform: rotateY(0deg);
       z-index: 2;
     }
 
+    h1, h2, h3 {
+      margin: 10px 0;
+    }
+
     .emotion-button {
-      background: #007BFF;
+      background: #007bff;
       color: white;
-      padding: 10px 16px;
-      margin: 6px 0;
       border: none;
-      border-radius: 5px;
+      padding: 10px;
+      margin: 6px 0;
       width: 80%;
-      cursor: pointer;
+      border-radius: 5px;
       font-size: 16px;
+      cursor: pointer;
     }
 
     .emotion-button:hover {
       background: #0056b3;
     }
 
+    #quote-display {
+      margin-top: 30px;
+      text-align: center;
+      display: none;
+    }
+
     #control-buttons {
-      margin-top: 20px;
+      margin-top: 15px;
       display: none;
     }
 
     #control-buttons button {
-      background: #28a745;
-      border: none;
+      background-color: #28a745;
       color: white;
-      font-size: 15px;
-      padding: 8px 14px;
-      margin: 0 10px;
+      border: none;
+      padding: 10px 15px;
+      margin: 0 8px;
       border-radius: 5px;
+      font-size: 15px;
       cursor: pointer;
     }
 
     #close-book {
-      background: #dc3545;
-      margin-top: 20px;
+      background-color: #dc3545;
+      margin-top: 15px;
     }
-
-    h1 {
-      font-size: 22px;
-    }
-
   </style>
 </head>
 <body>
 
 <div id="book-container">
-  <!-- 표지 -->
-  <div class="page front" id="cover-page">
+  <div class="page" id="cover-page">
     <h1>✨ 마법의 패션 책님 ✨</h1>
+    <p style="color: gray; font-size: 14px;">곧 책이 열립니다...</p>
   </div>
-
-  <!-- 첫 페이지 (감정 선택) -->
-  <div class="page back" id="emotion-page">
-    <h2>당신의 감정을 선택해주세요</h2>
+  <div class="page" id="emotion-page">
+    <h2>감정을 선택해주세요</h2>
     <div id="emotion-buttons">
       <button class="emotion-button" data-emotion="행복">행복</button>
       <button class="emotion-button" data-emotion="슬픔">슬픔</button>
@@ -128,10 +133,9 @@
   </div>
 </div>
 
-<!-- 명언 표시 -->
-<div id="quote-display" style="display:none; margin-top: 30px; text-align: center;">
+<div id="quote-display">
   <h3 id="emotion-title"></h3>
-  <p style="font-style: italic;" id="quote-text"></p>
+  <p id="quote-text" style="font-style: italic;"></p>
   <p><strong id="quote-author"></strong></p>
   <div id="control-buttons">
     <button id="btn-other-quote">🔁 다른 명언</button>
@@ -140,18 +144,16 @@
 </div>
 
 <script>
-  const cover = document.getElementById("cover-page");
-  const back = document.getElementById("emotion-page");
-  const container = document.getElementById("book-container");
-
-  const emotionButtons = document.querySelectorAll(".emotion-button");
+  const coverPage = document.getElementById("cover-page");
+  const emotionPage = document.getElementById("emotion-page");
   const quoteDisplay = document.getElementById("quote-display");
+  const emotionButtons = document.querySelectorAll(".emotion-button");
+  const emotionTitle = document.getElementById("emotion-title");
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
-  const emotionTitle = document.getElementById("emotion-title");
+  const controlButtons = document.getElementById("control-buttons");
   const btnOther = document.getElementById("btn-other-quote");
   const btnClose = document.getElementById("close-book");
-  const controlButtons = document.getElementById("control-buttons");
 
   const quotes = {
     "행복": [
@@ -206,25 +208,23 @@
     ]
   };
 
-  function flipBook() {
-    cover.classList.add("flipped");
-    back.classList.add("flipped");
-  }
+  // 자동으로 책 넘기기
+  setTimeout(() => {
+    coverPage.classList.add("flipped");
+    emotionPage.classList.add("flipped");
+  }, 2000);
 
-  // 2초 후 자동으로 책 열기
-  setTimeout(flipBook, 2000);
-
-  emotionButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      const emotion = button.getAttribute("data-emotion");
+  // 감정 선택 이벤트
+  emotionButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const emotion = btn.getAttribute("data-emotion");
       showQuote(emotion);
     });
   });
 
   function showQuote(emotion) {
-    const quoteList = quotes[emotion];
-    const [quote, author] = quoteList[Math.floor(Math.random() * quoteList.length)];
-
+    const list = quotes[emotion];
+    const [quote, author] = list[Math.floor(Math.random() * list.length)];
     emotionTitle.textContent = `💬 ${emotion}의 명언`;
     quoteText.textContent = `"${quote}"`;
     quoteAuthor.textContent = `- ${author}`;
@@ -238,10 +238,9 @@
   });
 
   btnClose.addEventListener("click", () => {
-    window.location.reload(); // 페이지 다시 로드해서 초기 상태로
+    location.reload(); // 책 다시 덮기 = 새로고침
   });
 </script>
 
 </body>
 </html>
-
